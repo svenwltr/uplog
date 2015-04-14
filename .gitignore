@@ -2,3 +2,4 @@
 /.bowerrc
 /resources/assets
 .*.swp
+/dist
