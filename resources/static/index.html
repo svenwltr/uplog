@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" ng-app="uplogApp">
+<html lang="en" ng-app="uplogApp">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -45,15 +45,31 @@
 					<tr class="sortable">
 						<th ng-click="table.setSort('since')">
 							Date
+							<span ng-if="table.sort == 'since' && !table.reverse"
+							   	class="glyphicon glyphicon-triangle-top"></span>
+							<span ng-if="table.sort == 'since' && table.reverse"
+							   	class="glyphicon glyphicon-triangle-bottom"></span>
 						</th>
 						<th ng-click="table.setSort('beginSOD()')">
 							Begin
+							<span ng-if="table.sort == 'beginSOD()' && !table.reverse"
+							   	class="glyphicon glyphicon-triangle-top"></span>
+							<span ng-if="table.sort == 'beginSOD()' && table.reverse"
+							   	class="glyphicon glyphicon-triangle-bottom"></span>
 						</th>
 						<th ng-click="table.setSort('endSOD()')">
 							End
+							<span ng-if="table.sort == 'endSOD()' && !table.reverse"
+							   	class="glyphicon glyphicon-triangle-top"></span>
+							<span ng-if="table.sort == 'endSOD()' && table.reverse"
+							   	class="glyphicon glyphicon-triangle-bottom"></span>
 						</th>
 						<th ng-click="table.setSort('uptime')">
 							Uptime
+							<span ng-if="table.sort == 'uptime' && !table.reverse"
+							   	class="glyphicon glyphicon-triangle-top"></span>
+							<span ng-if="table.sort == 'uptime' && table.reverse"
+							   	class="glyphicon glyphicon-triangle-bottom"></span>
 						</th>
 					</tr>
 				</thead>

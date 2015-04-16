@@ -37,6 +37,7 @@ app.controller("TableController", function($scope, $http, $interval) {
 			if($scope.table.sort === key) {
 				$scope.table.reverse = !$scope.table.reverse;
 			} else {
+				$scope.table.reverse = true
 				$scope.table.sort = key;
 			}
 		},
