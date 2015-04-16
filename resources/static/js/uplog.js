@@ -66,7 +66,25 @@ function Record(record) {
 
 }
 
-Record.prototype.until = function() {
+Record.prototype.begin = function() {
+	return this.since
+
+}
+
+Record.prototype.end = function() {
 	return this.since + this.uptime;
+
+}
+
+Record.prototype.beginSOD = function() {
+	return secondOfDay(this.begin());
+}
+
+Record.prototype.endSOD = function() {
+	return secondOfDay(this.end());
+}
+
+function secondOfDay(time) {
+	return time % (24*3600);
 
 }

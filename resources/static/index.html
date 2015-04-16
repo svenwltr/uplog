@@ -44,11 +44,12 @@
 				<thead>
 					<tr class="sortable">
 						<th ng-click="table.setSort('since')">
-							Begin
-							<span class="glyphicon glyphicon-chevron-up"></span>
-							<span class="glyphicon glyphicon-chevron-down"></span>
+							Date
 						</th>
-						<th ng-click="table.setSort('until()')">
+						<th ng-click="table.setSort('beginSOD()')">
+							Begin
+						</th>
+						<th ng-click="table.setSort('endSOD()')">
 							End
 						</th>
 						<th ng-click="table.setSort('uptime')">
@@ -59,8 +60,9 @@
 				<tbody>
 					<tr ng-repeat="record in records | orderBy:table.sort:table.reverse" 
 						ng-class="{info: record.active}">
-						<td>{{ record.since | amDateFormat:"L, LT" }}</td>
-						<td>{{ record.until() | amDateFormat:"L, LT" }}</td>
+						<td>{{ record.begin() | amDateFormat:"L" }}</td>
+						<td>{{ record.begin() | amDateFormat:"LTS" }}</td>
+						<td>{{ record.end() | amDateFormat:"LTS" }}</td>
 						<td>{{ record.uptime | duration }}</td>
 					</tr>
 				</tbody>
