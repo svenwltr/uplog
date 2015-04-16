@@ -17,6 +17,12 @@
 
 	<script src="js/uplog.js"></script>
 
+	<style type="text/css">
+		.sortable th {
+			cursor: pointer;
+		}
+	</style>
+
 </head>
 <body ng-controller="MainController">
    <nav class="navbar navbar-inverse navbar-static-top">
@@ -36,14 +42,23 @@
 		<div ng-controller="TableController">
 			<table class="table table-hover table-condensed">
 				<thead>
-					<tr>
-						<th>Begin</th>
-						<th>End</th>
-						<th>Uptime</th>
+					<tr class="sortable">
+						<th ng-click="table.setSort('since')">
+							Begin
+							<span class="glyphicon glyphicon-chevron-up"></span>
+							<span class="glyphicon glyphicon-chevron-down"></span>
+						</th>
+						<th ng-click="table.setSort('until()')">
+							End
+						</th>
+						<th ng-click="table.setSort('uptime')">
+							Uptime
+						</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="record in records" ng-class="{info: record.active}">
+					<tr ng-repeat="record in records | orderBy:table.sort:table.reverse" 
+						ng-class="{info: record.active}">
 						<td>{{ record.since | amDateFormat:"L, LT" }}</td>
 						<td>{{ record.until() | amDateFormat:"L, LT" }}</td>
 						<td>{{ record.uptime | duration }}</td>

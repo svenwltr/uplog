@@ -30,6 +30,18 @@ app.controller("MainController", function() {
 
 app.controller("TableController", function($scope, $http, $interval) {
 
+	$scope.table = {
+		sort : 'since',
+		reverse: true,
+		setSort: function(key) {
+			if($scope.table.sort === key) {
+				$scope.table.reverse = !$scope.table.reverse;
+			} else {
+				$scope.table.sort = key;
+			}
+		},
+	}
+
 	refresh();
 	$interval(refresh, 1000);
 
