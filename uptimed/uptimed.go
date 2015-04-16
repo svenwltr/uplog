@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	logging "github.com/op/go-logging"
 )
@@ -17,9 +19,10 @@ var log *logging.Logger = logging.MustGetLogger("uplog.uptimed")
 type Records []*Record
 
 type Record struct {
-	Uptime int    `json:"uptime"`
-	Since  int    `json:"since"`
+	Uptime int64  `json:"uptime"`
+	Since  int64  `json:"since"`
 	Kernel string `json:"kernel"`
+	Active bool   `json:"active"`
 }
 
 func parseRecord(line string) (*Record, error) {
@@ -29,19 +32,19 @@ func parseRecord(line string) (*Record, error) {
 		return nil, fmt.Errorf("Couldn't split '%s' correctly.", line)
 	}
 
-	uptime, err := strconv.Atoi(cols[0])
+	uptime, err := strconv.ParseInt(cols[0], 10, 64)
 	if err != nil {
 		return nil, err
 	}
 
-	since, err := strconv.Atoi(cols[1])
+	since, err := strconv.ParseInt(cols[1], 10, 64)
 	if err != nil {
 		return nil, err
 	}
 
 	kernel := cols[2]
 
-	record := Record{uptime, since, kernel}
+	record := Record{uptime, since, kernel, false}
 	return &record, nil
 
 }
@@ -65,6 +68,13 @@ func GetRecords() (*Records, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Sort, oldest uptime last.
+	sort.Sort(sort.Reverse(BySince(records)))
+
+	// Update current uptime, since it is written every 10 minutes, only.
+	records[0].Uptime = time.Now().Unix() - records[0].Since
+	records[0].Active = true
 
 	return &records, nil
 

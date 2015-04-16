@@ -29,6 +29,7 @@ func logged(handler http.Handler) http.Handler {
 }
 
 func recordHandler(w http.ResponseWriter, r *http.Request) {
+	log.Debug("%s %s %s", r.RemoteAddr, r.Method, r.URL)
 	records, err := uptimed.GetRecords()
 	if err != nil {
 		log.Error(err.Error())
