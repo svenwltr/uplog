@@ -12,7 +12,7 @@ app.constant('angularMomentConfig', {
 
 app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
-		when('/', {
+		when('/home', {
 			templateUrl: 'html/overview.html',
 			controller: 'OverviewController'
 		}).
@@ -21,7 +21,7 @@ app.config(['$routeProvider', function($routeProvider) {
 			controller: 'TableController'
 		}).
 		otherwise({
-			redirectTo: '/'
+			redirectTo: '/home'
 		});
 }]);
 
@@ -39,6 +39,36 @@ app.filter('duration', function() {
 
 	};
 })
+
+app.directive('myActiveState', function($location) {
+	return {
+		restrict: 'AC',
+		link: function(scope, element, attr) {
+			var a = element.find('a');
+
+			/* refresh, when location changed */
+			scope.$on('$locationChangeSuccess', refresh);
+
+			/* refresh, when href changed (ie by using ng-href) */
+			scope.$watch( /* may impact performance */
+				function(){ return a.attr('href') },
+				function(){ refresh(); }
+			);
+
+			/* refresh on load */
+			refresh();
+
+			function refresh() {
+				var href = a.attr('href');
+				var curr = '#' + $location.path();
+				if(curr.indexOf(href) == 0)
+					attr.$addClass('active');
+				else
+					attr.$removeClass('active');
+			}
+		},
+	}
+});
 
 app.controller("MainController", function() {
 });
