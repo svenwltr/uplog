@@ -12,12 +12,16 @@ app.constant('angularMomentConfig', {
 
 app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
+		when('/', {
+			templateUrl: 'html/overview.html',
+			controller: 'OverviewController'
+		}).
 		when('/table', {
 			templateUrl: 'html/table.html',
 			controller: 'TableController'
 		}).
 		otherwise({
-			redirectTo: '/table'
+			redirectTo: '/'
 		});
 }]);
 
