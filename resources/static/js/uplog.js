@@ -10,6 +10,17 @@ app.constant('angularMomentConfig', {
     preprocess: 'unix'
 });
 
+app.config(['$routeProvider', function($routeProvider) {
+	$routeProvider.
+		when('/table', {
+			templateUrl: 'html/table.html',
+			controller: 'TableController'
+		}).
+		otherwise({
+			redirectTo: '/table'
+		});
+}]);
+
 app.filter('duration', function() {
 	return function(sec_num) {
 		var hours   = Math.floor(sec_num / 3600);

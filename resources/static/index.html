@@ -25,73 +25,21 @@
 
 </head>
 <body ng-controller="MainController">
-   <nav class="navbar navbar-inverse navbar-static-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">Uplog</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Table</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
-
-    <div class="container">
-		<div ng-controller="TableController">
-			<table class="table table-hover table-condensed">
-				<thead>
-					<tr class="sortable">
-						<th ng-click="table.setSort('position')">
-							#
-							<span ng-if="table.sort == 'position' && !table.reverse"
-							   	class="glyphicon glyphicon-triangle-top"></span>
-							<span ng-if="table.sort == 'position' && table.reverse"
-							   	class="glyphicon glyphicon-triangle-bottom"></span>
-						</th>
-						<th ng-click="table.setSort('since')">
-							Date
-							<span ng-if="table.sort == 'since' && !table.reverse"
-							   	class="glyphicon glyphicon-triangle-top"></span>
-							<span ng-if="table.sort == 'since' && table.reverse"
-							   	class="glyphicon glyphicon-triangle-bottom"></span>
-						</th>
-						<th ng-click="table.setSort('beginSOD()')">
-							Begin
-							<span ng-if="table.sort == 'beginSOD()' && !table.reverse"
-							   	class="glyphicon glyphicon-triangle-top"></span>
-							<span ng-if="table.sort == 'beginSOD()' && table.reverse"
-							   	class="glyphicon glyphicon-triangle-bottom"></span>
-						</th>
-						<th ng-click="table.setSort('endSOD()')">
-							End
-							<span ng-if="table.sort == 'endSOD()' && !table.reverse"
-							   	class="glyphicon glyphicon-triangle-top"></span>
-							<span ng-if="table.sort == 'endSOD()' && table.reverse"
-							   	class="glyphicon glyphicon-triangle-bottom"></span>
-						</th>
-						<th ng-click="table.setSort('uptime')">
-							Uptime
-							<span ng-if="table.sort == 'uptime' && !table.reverse"
-							   	class="glyphicon glyphicon-triangle-top"></span>
-							<span ng-if="table.sort == 'uptime' && table.reverse"
-							   	class="glyphicon glyphicon-triangle-bottom"></span>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="record in records | orderBy:table.sort:table.reverse" 
-						ng-class="{info: record.active}">
-						<td>{{ record.position }}</td>
-						<td>{{ record.begin() | amDateFormat:"L" }}</td>
-						<td>{{ record.begin() | amDateFormat:"LTS" }}</td>
-						<td>{{ record.end() | amDateFormat:"LTS" }}</td>
-						<td>{{ record.uptime | duration }}</td>
-					</tr>
-				</tbody>
-			</table>
+	<nav class="navbar navbar-inverse navbar-static-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#/">Uplog</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#/table">Table</a></li>
+				</ul>
+			</div><!--/.nav-collapse -->
 		</div>
+	</nav>
+
+	<div class="container">
+		<div ng-view></div>
 	</div>
 
 </body>
