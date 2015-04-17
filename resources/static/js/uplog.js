@@ -40,6 +40,41 @@ app.filter('duration', function() {
 	};
 })
 
+/*
+ * Automaticly refreshes records and broadcasts them.
+ */
+app.run(function($rootScope, $http, $interval) {
+	var cache = null;
+
+	$rootScope.$on('$viewContentLoaded', function() {
+		if(cache) {
+			$rootScope.$broadcast('recordsUpdate', cache);
+		}
+	});
+
+	refresh();
+	$interval(refresh, 1000);
+
+	function refresh() {
+		$http.get('/api/records')
+			.success(function(data) {
+				data.sort(function(a,b) {
+					return a.uptime - b.uptime;
+				});
+				var records = [];
+				data.forEach(function(record, i) {
+					record.position = data.length - i;
+					records.push(new Record(record));
+				});
+
+				cache = records;
+				$rootScope.$broadcast('recordsUpdate', records);
+				
+			});
+	}
+
+});
+
 app.directive('myActiveState', function($location) {
 	return {
 		restrict: 'AC',

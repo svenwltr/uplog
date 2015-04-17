@@ -14,22 +14,8 @@ app.controller("TableController", function($scope, $http, $interval) {
 		},
 	}
 
-	refresh();
-	$interval(refresh, 1000);
-
-	function refresh() {
-	$http.get('/api/records')
-		.success(function(data) {
-			data.sort(function(a,b) {
-				return a.uptime - b.uptime;
-			});
-			$scope.records = [];
-			data.forEach(function(record, i) {
-				record.position = data.length - i;
-				$scope.records.push(new Record(record));
-			});
-		});
-
-	}
+	$scope.$on('recordsUpdate', function(e, records) {
+		$scope.records = records;
+	});
 
 });
