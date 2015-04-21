@@ -1,4 +1,32 @@
 
 <h1>Overview</h1>
 
-<pre>{{ scores | json }}</pre>
+<div class="row">
+	<div class="col-sm-4">
+		<table class="table">
+			<tr>
+				<th>Position</th>
+				<td>{{ scores.worst.position }} / {{ scores.curr.position }}</th>
+			</tr>
+			<tr>
+				<th>Uptime</th>
+				<td>{{ scores.curr.uptime | duration }}</th>
+			</tr>
+			<tr>
+				<th>Level up in</th>
+				<td>{{ scores.next.uptime - scores.curr.uptime | duration }}</th>
+			</tr>
+			<tr>
+				<th>Milestone in</th>
+				<td>{{ 6*3600 - scores.curr.uptime | duration }}</th>
+			</tr>
+			<tr>
+				<th>1st in</th>
+				<td>{{ scores.best.uptime - scores.curr.uptime | duration }}</th>
+			</tr>
+		</table>
+	</div>
+	<div class="col-sm-8">
+		<pre>{{ scores | json }}</pre>
+	</div>
+</div>
