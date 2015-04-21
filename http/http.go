@@ -47,10 +47,30 @@ func recordHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func lastRecordHandler(w http.ResponseWriter, r *http.Request) {
+	log.Debug("%s %s %s", r.RemoteAddr, r.Method, r.URL)
+	records, err := uptimed.GetLastRecord()
+	if err != nil {
+		log.Error(err.Error())
+		w.WriteHeader(500)
+	}
+
+	bytes, err := json.Marshal(records)
+	if err != nil {
+		log.Error(err.Error())
+		w.WriteHeader(500)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(bytes)
+
+}
+
 func Start(appRoot string, port int) {
 	handleFiles("/assets/", path.Join(appRoot, "resources/assets"))
 	handleFiles("/", path.Join(appRoot, "resources/static"))
 
+	http.HandleFunc("/api/records/last", lastRecordHandler)
 	http.HandleFunc("/api/records", recordHandler)
 
 	listen := fmt.Sprintf(":%d", port)

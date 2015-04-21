@@ -44,18 +44,37 @@ app.filter('duration', function() {
  * Automaticly refreshes records and broadcasts them.
  */
 app.run(function($rootScope, $http, $interval) {
-	var cache = null;
+	var cache = {
+		all: null,
+		last: null,
+	};
 
 	$rootScope.$on('$viewContentLoaded', function() {
 		if(cache) {
-			$rootScope.$broadcast('recordsUpdate', cache);
+			$rootScope.$broadcast('recordsUpdate', cache.all);
 		}
 	});
 
-	refresh();
+	refreshAll();
 	$interval(refresh, 1000);
 
 	function refresh() {
+		$http.get('/api/records/last')
+			.success(function(data) {
+				var record = new Record(data);
+				if(record.since === cache.last.since) {
+					record.position = cache.last.position;
+					cache.last = record;
+					cache.all[0] = record;
+					$rootScope.$broadcast('recordsUpdate', cache.all);
+
+				} else {
+					refreshAll();
+				}
+			});
+	}
+
+	function refreshAll() {
 		$http.get('/api/records')
 			.success(function(data) {
 				data.sort(function(a,b) {
@@ -67,7 +86,8 @@ app.run(function($rootScope, $http, $interval) {
 					records.push(new Record(record));
 				});
 
-				cache = records;
+				cache.all = records;
+				cache.last = records[0];
 				$rootScope.$broadcast('recordsUpdate', records);
 				
 			});

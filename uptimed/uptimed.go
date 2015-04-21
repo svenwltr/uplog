@@ -79,3 +79,10 @@ func GetRecords() (*Records, error) {
 	return &records, nil
 
 }
+
+func GetLastRecord() (*Record, error) {
+	var records *Records
+	records, err := GetRecords()
+	return (*records)[0], err
+
+}
