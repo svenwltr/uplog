@@ -12,18 +12,47 @@
 				<th>Uptime</th>
 				<td>{{ scores.curr.uptime | duration }}</th>
 			</tr>
-			<tr>
+			<tr><td colspan="2"></td></tr>
+
+			<tr ng-if="scores.curr.position > 1">
+				<th>1st in</th>
+				<td>{{ scores.best.uptime - scores.curr.uptime | duration }}</th>
+			</tr>
+			<tr ng-if="scores.curr.position > 1">
 				<th>Level up in</th>
 				<td>{{ scores.next.uptime - scores.curr.uptime | duration }}</th>
 			</tr>
 			<tr>
-				<th>Milestone in</th>
-				<td>{{ 6*3600 - scores.curr.uptime | duration }}</th>
+				<th>Average in</th>
+				<td>{{ stats.avg - scores.curr.uptime | duration }}</th>
+			</tr>
+			<tr><td colspan="2"></td></tr>
+
+			<tr>
+				<th>Average Uptime</th>
+				<td>{{ stats.avg | duration  }}</th>
 			</tr>
 			<tr>
-				<th>1st in</th>
-				<td>{{ scores.best.uptime - scores.curr.uptime | duration }}</th>
+				<th>Trending Uptime</th>
+				<td>{{ stats.trend | duration  }}</th>
 			</tr>
+			<tr>
+				<th>Trend</th>
+				<td ng-class="{'text-danger': stats.avg > stats.trend,
+					'text-success': stats.avg < stats.trend}">
+					{{ ( 1 - ( stats.avg / stats.trend ) ) * 100 | number:2 }}%
+				</th>
+			</tr>
+			<tr>
+				<th>Average Uptime Per Week</th>
+				<td>{{ 5 * stats.avg | duration  }}</th>
+			</tr>
+			<tr>
+				<th>Total Uptime</th>
+				<td>{{ stats.total | duration  }}</th>
+			</tr>
+			<tr><td colspan="2"></td></tr>
+
 		</table>
 	</div>
 	<div class="col-sm-8">
