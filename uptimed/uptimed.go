@@ -19,10 +19,11 @@ var log *logging.Logger = logging.MustGetLogger("uplog.uptimed")
 type Records []*Record
 
 type Record struct {
-	Uptime int64  `json:"uptime"`
-	Since  int64  `json:"since"`
-	Kernel string `json:"kernel"`
-	Active bool   `json:"active"`
+	Uptime   int64  `json:"uptime"`
+	Since    int64  `json:"since"`
+	Kernel   string `json:"kernel"`
+	Position int    `json:"position"`
+	Rank     int    `json:"rank"`
 }
 
 func parseRecord(line string) (*Record, error) {
@@ -44,7 +45,7 @@ func parseRecord(line string) (*Record, error) {
 
 	kernel := cols[2]
 
-	record := Record{uptime, since, kernel, false}
+	record := Record{uptime, since, kernel, 0, 0}
 	return &record, nil
 
 }
@@ -69,20 +70,23 @@ func GetRecords() (*Records, error) {
 		return nil, err
 	}
 
-	// Sort, oldest uptime last.
-	sort.Sort(sort.Reverse(BySince(records)))
+	// Set position.
+
+	sort.Sort(BySince(records))
+	for i, record := range records {
+		record.Position = i + 1
+	}
 
 	// Update current uptime, since it is written every 10 minutes, only.
-	records[0].Uptime = time.Now().Unix() - records[0].Since
-	records[0].Active = true
+	var i int = len(records) - 1
+	records[i].Uptime = time.Now().Unix() - records[i].Since
+
+	// Set rank.
+	sort.Sort(ByUptime(records))
+	for i, record := range records {
+		record.Rank = i + 1
+	}
 
 	return &records, nil
-
-}
-
-func GetLastRecord() (*Record, error) {
-	var records *Records
-	records, err := GetRecords()
-	return (*records)[0], err
 
 }
