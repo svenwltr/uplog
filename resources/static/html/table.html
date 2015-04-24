@@ -4,11 +4,11 @@
 <table class="table table-hover table-condensed">
 	<thead>
 		<tr class="sortable">
-			<th ng-click="table.setSort('position')" style="width: 12%;">
+			<th ng-click="table.setSort('rank')" style="width: 12%;">
 				#
-				<span ng-if="table.sort == 'position' && !table.reverse"
+				<span ng-if="table.sort == 'rank' && !table.reverse"
 					class="glyphicon glyphicon-triangle-top"></span>
-				<span ng-if="table.sort == 'position' && table.reverse"
+				<span ng-if="table.sort == 'rank' && table.reverse"
 					class="glyphicon glyphicon-triangle-bottom"></span>
 			</th>
 			<th ng-click="table.setSort('since')" style="width: 22%;">
@@ -42,9 +42,9 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="record in records | orderBy:table.sort:table.reverse" 
-			ng-class="{info: record.active}">
-			<td>{{ record.position }}</td>
+		<tr ng-repeat="record in records.raw | orderBy:table.sort:table.reverse" 
+			ng-class="{info: record.position == records.active().position}">
+			<td>{{ record.rank }}</td>
 			<td>{{ record.begin() | amDateFormat:"L" }}</td>
 			<td>{{ record.begin() | amDateFormat:"LTS" }}</td>
 			<td>{{ record.end() | amDateFormat:"LTS" }}</td>

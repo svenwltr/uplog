@@ -44,53 +44,26 @@ app.filter('duration', function() {
  * Automaticly refreshes records and broadcasts them.
  */
 app.run(function($rootScope, $http, $interval) {
-	var cache = {
-		all: null,
-		last: null,
-	};
+	var cache = null;
 
 	$rootScope.$on('$viewContentLoaded', function() {
 		if(cache) {
-			$rootScope.$broadcast('recordsUpdate', cache.all);
+			$rootScope.$broadcast('recordsUpdate', cache);
 		}
 	});
 
-	refreshAll();
+	refresh();
 	$interval(refresh, 1000);
 
 	function refresh() {
-		$http.get('/api/records/last')
-			.success(function(data) {
-				var record = new Record(data);
-				if(record.since === cache.last.since) {
-					record.position = cache.last.position;
-					cache.last = record;
-					cache.all[0] = record;
-					$rootScope.$broadcast('recordsUpdate', cache.all);
+		$http.get('/api/records').success(function(data) {
+			var records = new Records(data);
+			records.inheritHashes(cache);
 
-				} else {
-					refreshAll();
-				}
-			});
-	}
-
-	function refreshAll() {
-		$http.get('/api/records')
-			.success(function(data) {
-				data.sort(function(a,b) {
-					return a.uptime - b.uptime;
-				});
-				var records = [];
-				data.forEach(function(record, i) {
-					record.position = data.length - i;
-					records.push(new Record(record));
-				});
-
-				cache.all = records;
-				cache.last = records[0];
-				$rootScope.$broadcast('recordsUpdate', records);
-				
-			});
+			cache = records;
+			$rootScope.$broadcast('recordsUpdate', records);
+			
+		});
 	}
 
 });

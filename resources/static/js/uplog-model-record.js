@@ -4,11 +4,11 @@ function secondOfDay(time) {
 }
 
 function Record(record) {
+	this.kernel = record.kernel;
+	this.position = record.position;
+	this.rank = record.rank;
 	this.since = record.since;
 	this.uptime = record.uptime;
-	this.kernel = record.kernel;
-	this.active = record.active;
-	this.position = record.position;
 
 }
 
