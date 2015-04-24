@@ -12,8 +12,6 @@ function Records(data) {
 		},
 	};
 
-	self.raw = my.records;
-
 	data.forEach(function(data) {
 		var record = new Record(data);
 		my.records.push(record);
@@ -21,6 +19,11 @@ function Records(data) {
 		my.index.rank[record.rank] = record;
 
 	});
+
+	my.records.sort(function(a, b) {
+		return a.since - b.since;
+	});
+
 
 	my.curr = my.records.reduce(function(best, curr) {
 		return (best.position < curr.position)?curr:best;
@@ -31,6 +34,10 @@ function Records(data) {
 	self.inheritHashes = function(other) {
 		// TODO
 	}
+
+	self.slice = function(begin, end) {
+		return my.records.slice(begin, end);
+	};
 
 	/* public functions: position */
 
@@ -56,26 +63,21 @@ function Records(data) {
 
 	/* public functions: stats */
 
-	/*our.getSinceSlice = function(begin, end) {
-		return orderedSlice('since').slice(begin, end);
+	self.totalUptime = function(begin, end) {
+		return self.slice(begin, end)
+			.reduce(function(sum, record) {
+				return sum + record.uptime;
+			}, 0);
 	}
 
-	our.getTotalUptime = function(begin, end) { 
-		var a = our.getSinceSlice(begin, end);
-		return a.reduce(function(sum, record) {
-			return sum + record.uptime;
-		}, 0);
-
-	};
-
-	our.getAverageUptime = function(begin, end) {
-		var a = our.getSinceSlice(begin, end);
+	self.averageUptime = function(begin, end) {
+		var a = self.slice(begin, end);
 		var sum = a.reduce(function(sum, record) {
 			return sum + record.uptime;
 		}, 0);
 		return Math.round(sum / a.length);
 
-	}; */
+	};
 
 };
 

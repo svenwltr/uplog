@@ -24,9 +24,9 @@ app.controller("OverviewController", function($scope, $http, $interval) {
 		 */
 
 		$scope.stats = {};
-		//$scope.stats.total = records.getTotalUptime();
-		//$scope.stats.avg = records.getAverageUptime(0, -1);
-		//$scope.stats.trend = records.getAverageUptime(-1-trending, -1);
+		$scope.stats.total = records.totalUptime();
+		$scope.stats.avg = records.averageUptime(0, -1);
+		$scope.stats.trend = records.averageUptime(-1-trending, -1);
 
 
 		/*

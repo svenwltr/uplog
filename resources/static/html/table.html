@@ -42,7 +42,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="record in records.raw | orderBy:table.sort:table.reverse" 
+		<tr ng-repeat="record in records.slice() | orderBy:table.sort:table.reverse" 
 			ng-class="{info: record.position == records.active().position}">
 			<td>{{ record.rank }}</td>
 			<td>{{ record.begin() | amDateFormat:"L" }}</td>
@@ -52,3 +52,4 @@
 		</tr>
 	</tbody>
 </table>
+
