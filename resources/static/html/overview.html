@@ -6,52 +6,62 @@
 		<table class="table">
 			<tr>
 				<th>Position</th>
+				<td></td>
 				<td>{{ scores.curr.rank }} / {{ scores.worst.rank }}</th>
 			</tr>
 			<tr>
 				<th>Uptime</th>
+				<td></td>
 				<td>{{ scores.curr.uptime | duration }}</th>
 			</tr>
-			<tr><td colspan="2"></td></tr>
+			<tr><td colspan="3"></td></tr>
 
 			<tr ng-if="scores.curr.position > 1">
-				<th>1st in</th>
-				<td>{{ scores.best.uptime - scores.curr.uptime | duration }}</th>
+				<th>1st</th>
+				<td>in {{ scores.best.uptime - scores.curr.uptime | duration }}</th>
+				<td>at {{ (scores.best.uptime + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
 			</tr>
 			<tr ng-if="scores.curr.position > 1">
-				<th>1up in</th>
-				<td>{{ scores.next.uptime - scores.curr.uptime | duration }}</th>
+				<th>1up</th>
+				<td>in {{ scores.next.uptime - scores.curr.uptime | duration }}</th>
+				<td>at {{ (scores.next.uptime + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
 			</tr>
-			<tr>
-				<th>Average in</th>
-				<td>{{ stats.avg - scores.curr.uptime | duration }}</th>
+			<tr ng-if="stats.avg > scores.curr.uptime">
+				<th>Average</th>
+				<td>in {{ stats.avg - scores.curr.uptime | duration }}</th>
+				<td>at {{ (stats.avg + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
 			</tr>
-			<tr><td colspan="2"></td></tr>
+			<tr ng-if="stats.trend > scores.curr.uptime">
+				<th>Trending</th>
+				<td>in {{ stats.trend - scores.curr.uptime | duration }}</th>
+				<td>at {{ (stats.trend + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
+			</tr>
+			<tr><td colspan="3"></td></tr>
 
 			<tr>
-				<th>Average Uptime</th>
+				<th colspan="2">Average Uptime</th>
 				<td>{{ stats.avg | duration  }}</th>
 			</tr>
 			<tr>
-				<th>Trending Uptime</th>
+				<th colspan="2">Trending Uptime</th>
 				<td>{{ stats.trend | duration  }}</th>
 			</tr>
 			<tr>
-				<th>Trend</th>
+				<th colspan="2">Trend</th>
 				<td ng-class="{'text-danger': stats.avg > stats.trend,
 					'text-success': stats.avg < stats.trend}">
 					{{ ( 1 - ( stats.avg / stats.trend ) ) * 100 | number:2 }}%
 				</th>
 			</tr>
 			<tr>
-				<th>Average Uptime Per Week</th>
+				<th colspan="2">Average Uptime Per Week</th>
 				<td>{{ 5 * stats.avg | duration  }}</th>
 			</tr>
 			<tr>
-				<th>Total Uptime</th>
+				<th colspan="2">Total Uptime</th>
 				<td>{{ stats.total | duration  }}</th>
 			</tr>
-			<tr><td colspan="2"></td></tr>
+			<tr><td colspan="3"></td></tr>
 
 		</table>
 	</div>

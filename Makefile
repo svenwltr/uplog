@@ -31,6 +31,7 @@ assets:
 		'bootstrap#3' \
 		'angular#1.4' \
 		'angular-route#1.4' \
+		'angular-i18n#1.4' \
 		'angular-moment#0.9'
 
 run:
