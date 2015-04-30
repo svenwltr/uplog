@@ -16,12 +16,12 @@
 			</tr>
 			<tr><td colspan="3"></td></tr>
 
-			<tr ng-if="scores.curr.position > 1">
+			<tr ng-if="scores.curr.rank > 1">
 				<th>1st</th>
 				<td>in {{ scores.best.uptime - scores.curr.uptime | duration }}</th>
 				<td>at {{ (scores.best.uptime + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
 			</tr>
-			<tr ng-if="scores.curr.position > 1">
+			<tr ng-if="scores.curr.rank > 2">
 				<th>1up</th>
 				<td>in {{ scores.next.uptime - scores.curr.uptime | duration }}</th>
 				<td>at {{ (scores.next.uptime + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
