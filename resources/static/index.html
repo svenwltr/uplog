@@ -16,9 +16,12 @@
 	<script src="assets/moment/locale/de.js"></script>
 	<script src="assets/angular-moment/angular-moment.min.js"></script>
 
+	<script src="assets/d3/d3.min.js"></script>
+
 	<script src="js/uplog.js"></script>
 	<script src="js/uplog-controller-overview.js"></script>
 	<script src="js/uplog-controller-table.js"></script>
+	<script src="js/uplog-controller-charts.js"></script>
 	<script src="js/uplog-model-record.js"></script>
 	<script src="js/uplog-model-records.js"></script>
 
@@ -26,6 +29,26 @@
 		.sortable th {
 			cursor: pointer;
 		}
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+</style>
 	</style>
 
 </head>
@@ -39,6 +62,7 @@
 				<ul class="nav navbar-nav">
 					<li my-active-state><a href="#/home">Overview</a></li>
 					<li my-active-state><a href="#/table">Table</a></li>
+					<li my-active-state><a href="#/charts">Charts</a></li>
 				</ul>
 			</div><!--/.nav-collapse -->
 		</div>

@@ -20,6 +20,10 @@ app.config(['$routeProvider', function($routeProvider) {
 			templateUrl: 'html/table.html',
 			controller: 'TableController'
 		}).
+		when('/charts', {
+			templateUrl: 'html/charts.html',
+			controller: 'ChartsController'
+		}).
 		otherwise({
 			redirectTo: '/home'
 		});
