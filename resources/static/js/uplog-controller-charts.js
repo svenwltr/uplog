@@ -42,6 +42,7 @@ app.directive('myChart', function ($parse) {
 		var data = {
 			uptime: [],
 			avg: [],
+			trend: [],
 		};
 
 		var domains = {
@@ -55,11 +56,24 @@ app.directive('myChart', function ($parse) {
 			},
 		};
 
-		records.slice().forEach(function(record) {
+		records.slice().forEach(function(record, i) {
 			var x = record.since*1000
 			var y = record.uptime/3600.
 
 			data.uptime.push({x: x, y: y});
+
+			var prev = (i>0)?data[i-1]:{
+				uptime: {x: x, y: y},
+				avg: {x: x, y: y},
+				trend: {x: x, y: y}};
+
+			if(i<=0) {
+				data.avg.push({x: x, y: y});
+				data.trend.push({x: x, y: y});
+			} else {
+				data.avg.push({x: x, y: (data.avg[i-1].y*i + y)/(i+1)});
+				data.trend.push({x: x, y: data.trend[i-1].y*0.8 + y*0.2});
+			}
 
 			domains.x.min = Math.min(domains.x.min, x);
 			domains.x.max = Math.max(domains.x.max, x);
@@ -90,7 +104,7 @@ app.directive('myChart', function ($parse) {
 		    .y(function(d) { return y(d.y); });
 
 		x.domain([domains.x.min, domains.x.max])
-		y.domain([0, domains.y.max])
+		y.domain([domains.y.min, domains.y.max])
 
 		svg.append("g")
 			.attr("class", "x axis")
@@ -103,7 +117,17 @@ app.directive('myChart', function ($parse) {
 
 		svg.append("path")
 			.datum(data.uptime)
-			.attr("class", "line")
+			.attr("class", "line line-uptime")
+			.attr("d", line);
+
+		svg.append("path")
+			.datum(data.trend)
+			.attr("class", "line line-trend")
+			.attr("d", line);
+
+		svg.append("path")
+			.datum(data.avg)
+			.attr("class", "line line-avg")
 			.attr("d", line);
 
 		/*svg.append("text")
