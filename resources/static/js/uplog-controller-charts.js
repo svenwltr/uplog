@@ -36,8 +36,37 @@ app.directive('myChart', function ($parse) {
 		} 
 	};
 
-	function draw(data, el) {
+	function draw(records, el) {
 		var chart = d3.select(el);
+
+		var data = {
+			uptime: [],
+			avg: [],
+		};
+
+		var domains = {
+			x: {
+				min: records.slice(0,1)[0].since*1000,
+				max: records.slice(0,1)[0].since*1000,
+			},
+			y: {
+				min: records.slice(0,1)[0].uptime/3600.,
+				max: records.slice(0,1)[0].uptime/3600.,
+			},
+		};
+
+		records.slice().forEach(function(record) {
+			var x = record.since*1000
+			var y = record.uptime/3600.
+
+			data.uptime.push({x: x, y: y});
+
+			domains.x.min = Math.min(domains.x.min, x);
+			domains.x.max = Math.max(domains.x.max, x);
+			domains.y.min = Math.min(domains.y.min, y);
+			domains.y.max = Math.max(domains.y.max, y);
+
+		});
 
 		var svg = chart.append("div").attr("class", "chart").append("svg")
 			.attr("width", width + margin.left + margin.right)
@@ -57,11 +86,11 @@ app.directive('myChart', function ($parse) {
 			.orient("left");
 
 		var line = d3.svg.line()
-    		.x(function(d) { return x(d.since*1000); })
-		    .y(function(d) { return y(d.uptime/3600.); });
+    		.x(function(d) { return x(d.x); })
+		    .y(function(d) { return y(d.y); });
 
-		x.domain(d3.extent(data, function(d) { return d.since*1000; }));
-		y.domain([0, d3.max(data, function(d) { return d.uptime/3600.; })]);
+		x.domain([domains.x.min, domains.x.max])
+		y.domain([0, domains.y.max])
 
 		svg.append("g")
 			.attr("class", "x axis")
@@ -73,7 +102,7 @@ app.directive('myChart', function ($parse) {
 			.call(yAxis)
 
 		svg.append("path")
-			.datum(data)
+			.datum(data.uptime)
 			.attr("class", "line")
 			.attr("d", line);
 
