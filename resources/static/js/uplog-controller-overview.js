@@ -9,6 +9,7 @@ app.controller("OverviewController", function($scope, $http, $interval) {
 		 */
 
 		var curr = records.active();
+		var yest = records.slice(-2,-1)[0];
 
 		$scope.scores = {
 			best: records.best(),
@@ -25,8 +26,8 @@ app.controller("OverviewController", function($scope, $http, $interval) {
 
 		$scope.stats = {};
 		$scope.stats.total = records.totalUptime();
-		$scope.stats.avg = records.averageUptime(0, -1);
-		$scope.stats.trend = records.averageUptime(-1-trending, -1);
+		$scope.stats.avg = Math.round(yest.average);
+		$scope.stats.trend = Math.round(yest.trend);
 
 
 		/*

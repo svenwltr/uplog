@@ -13,7 +13,7 @@ app.directive('myChart', function ($parse) {
 
 	var margin = {top: 20, right: 20, bottom: 30, left: 50},
 		width = 960 - margin.left - margin.right,
-	   	height = 500 - margin.top - margin.bottom;
+	   	height = 400 - margin.top - margin.bottom;
 
      return {
 		restrict: 'E', // only as element
@@ -61,24 +61,15 @@ app.directive('myChart', function ($parse) {
 			var y = record.uptime/3600.
 
 			data.uptime.push({x: x, y: y});
-
-			var prev = (i>0)?data[i-1]:{
-				uptime: {x: x, y: y},
-				avg: {x: x, y: y},
-				trend: {x: x, y: y}};
-
-			if(i<=0) {
-				data.avg.push({x: x, y: y});
-				data.trend.push({x: x, y: y});
-			} else {
-				data.avg.push({x: x, y: (data.avg[i-1].y*i + y)/(i+1)});
-				data.trend.push({x: x, y: data.trend[i-1].y*0.8 + y*0.2});
-			}
+			data.trend.push({x: x, y: record.trend/3600.})
+			data.avg.push({x: x, y: record.average/3600.})
 
 			domains.x.min = Math.min(domains.x.min, x);
 			domains.x.max = Math.max(domains.x.max, x);
-			domains.y.min = Math.min(domains.y.min, y);
-			domains.y.max = Math.max(domains.y.max, y);
+			if(i !== records.length-1) {
+				domains.y.min = Math.min(domains.y.min, y);
+				domains.y.max = Math.max(domains.y.max, y);
+			}
 
 		});
 
@@ -100,11 +91,12 @@ app.directive('myChart', function ($parse) {
 			.orient("left");
 
 		var line = d3.svg.line()
+			.interpolate('monotone')
     		.x(function(d) { return x(d.x); })
 		    .y(function(d) { return y(d.y); });
 
 		x.domain([domains.x.min, domains.x.max])
-		y.domain([domains.y.min, domains.y.max])
+		y.domain([domains.y.min-0.2, domains.y.max+0.2])
 
 		svg.append("g")
 			.attr("class", "x axis")
@@ -115,20 +107,9 @@ app.directive('myChart', function ($parse) {
 			.attr("class", "y axis")
 			.call(yAxis)
 
-		svg.append("path")
-			.datum(data.uptime)
-			.attr("class", "line line-uptime")
-			.attr("d", line);
-
-		svg.append("path")
-			.datum(data.trend)
-			.attr("class", "line line-trend")
-			.attr("d", line);
-
-		svg.append("path")
-			.datum(data.avg)
-			.attr("class", "line line-avg")
-			.attr("d", line);
+		plot(data.trend, 'trend');
+		plot(data.avg, 'avg');
+		plot(data.uptime, 'uptime');
 
 		/*svg.append("text")
 			.attr("class", "x label")
@@ -136,6 +117,21 @@ app.directive('myChart', function ($parse) {
 			.attr("x", width/2.)
 			.attr("y", height + 35)
 			.text("Date")*/
+
+		function plot(data, suffix) {
+			svg.append("path")
+				.datum(data)
+				.attr("class", "line line-"+suffix)
+				.attr("d", line);
+			svg.selectAll(".point")
+				.data(data)
+				.enter().append("circle")
+				.attr("stroke", "black")
+				.attr("fill", function(d, i) { return "black" })
+				.attr("cx", function(d, i) { return x(d.x) })
+				.attr("cy", function(d, i) { return y(d.y) })
+				.attr("r", function(d, i) { return 1 });
+		}
 
 	}
 });

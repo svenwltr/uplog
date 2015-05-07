@@ -9,6 +9,8 @@ function Record(record) {
 	this.rank = record.rank;
 	this.since = record.since;
 	this.uptime = record.uptime;
+	this.trend = record.trend;
+	this.average = record.average;
 
 }
 

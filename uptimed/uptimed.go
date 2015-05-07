@@ -19,11 +19,13 @@ var log *logging.Logger = logging.MustGetLogger("uplog.uptimed")
 type Records []*Record
 
 type Record struct {
-	Uptime   int64  `json:"uptime"`
-	Since    int64  `json:"since"`
-	Kernel   string `json:"kernel"`
-	Position int    `json:"position"`
-	Rank     int    `json:"rank"`
+	Uptime   int64   `json:"uptime"`
+	Since    int64   `json:"since"`
+	Kernel   string  `json:"kernel"`
+	Position int     `json:"position"`
+	Rank     int     `json:"rank"`
+	Trend    float64 `json:"trend"`
+	Average  float64 `json:"average"`
 }
 
 func parseRecord(line string) (*Record, error) {
@@ -45,7 +47,7 @@ func parseRecord(line string) (*Record, error) {
 
 	kernel := cols[2]
 
-	record := Record{uptime, since, kernel, 0, 0}
+	record := Record{uptime, since, kernel, 0, 0, 0, 0}
 	return &record, nil
 
 }
@@ -71,10 +73,20 @@ func GetRecords() (*Records, error) {
 	}
 
 	// Set position.
-
 	sort.Sort(BySince(records))
 	for i, record := range records {
 		record.Position = i + 1
+
+		var up float64 = float64(record.Uptime)
+
+		if i == 0 {
+			record.Trend = up
+			record.Average = up
+		} else {
+			var prev *Record = records[i-1]
+			record.Trend = prev.Trend*.8 + up*.2
+			record.Average = (prev.Average*float64(i) + up) / float64(i+1)
+		}
 	}
 
 	// Update current uptime, since it is written every 10 minutes, only.
