@@ -95,7 +95,7 @@ app.directive('myChart', function ($parse) {
     		.x(function(d) { return x(d.x); })
 		    .y(function(d) { return y(d.y); });
 
-		x.domain([domains.x.min, domains.x.max])
+		x.domain([domains.x.min, domains.x.max+12*60*60*1000])
 		y.domain([domains.y.min-0.2, domains.y.max+0.2])
 
 		svg.append("g")
@@ -106,6 +106,14 @@ app.directive('myChart', function ($parse) {
 		svg.append("g")
 			.attr("class", "y axis")
 			.call(yAxis)
+
+		svg.append("clipPath")
+			.attr("id", "chart-area")
+			.append("rect")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", width)
+			.attr("height", height);
 
 		plot(data.trend, 'trend');
 		plot(data.avg, 'avg');
@@ -120,12 +128,14 @@ app.directive('myChart', function ($parse) {
 
 		function plot(data, suffix) {
 			svg.append("path")
+				.attr("clip-path", "url(#chart-area)")
 				.datum(data)
 				.attr("class", "line line-"+suffix)
 				.attr("d", line);
 			svg.selectAll(".point")
 				.data(data)
 				.enter().append("circle")
+				.attr("clip-path", "url(#chart-area)")
 				.attr("stroke", "black")
 				.attr("fill", function(d, i) { return "black" })
 				.attr("cx", function(d, i) { return x(d.x) })
