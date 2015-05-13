@@ -2,7 +2,7 @@
 app.controller("ChartsController", function($scope) {
 
 	$scope.$on('recordsUpdate', function(e, records) {
-		$scope.records = records.slice();
+		$scope.records = records;
 
 		$scope.timechart = [
 			{
@@ -45,25 +45,26 @@ app.directive('myDensityChart', function($parse) {
      return {
 		restrict: 'E', // only as element
 		replace: false, // don't overwrite directive
-		scope: {data: '=chartData'},
+		scope: {
+			data: '&chartData',
+			active: '&chartActive',
+		},
 		link: function (scope, element, attrs) {
-			var data = scope.data;
-
-			if(data) {
-				draw(data, element[0]);
-			}
-
-			scope.$watch("data",function(newData) {
+			attrs.$observe("chartData",function(newData) {
 				element.empty();
-				data = newData;
-				draw(data, element[0]);
+				draw(scope.data(), scope.active(), element[0]);
 
+			});
+
+			scope.$watch('active()', function() {
+				element.empty();
+				draw(scope.data(), scope.active(), element[0]);
 			});
 
 		} 
 	};
 
-	function draw(data, el) {
+	function draw(data, active,  el) {
 		data.sort();
 
 		data = data.map(function(value, i) {
@@ -133,6 +134,16 @@ app.directive('myDensityChart', function($parse) {
 			.attr("cx", function(d, i) { return x(d.x) })
 			.attr("cy", function(d, i) { return y(d.y) })
 			.attr("r", function(d, i) { return 1 });
+
+		svg.append("line")
+			.attr("x1", x(active))
+			.attr("y1", 0)
+			.attr("x2", x(active))  //<<== and here
+			.attr("y2", height)
+			.style("stroke-width", 1)
+			.style("stroke", "red")
+			.style("fill", "none");
+
 	}
 });
 
