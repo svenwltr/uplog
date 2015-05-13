@@ -4,12 +4,37 @@ app.controller("ChartsController", function($scope) {
 	$scope.$on('recordsUpdate', function(e, records) {
 		$scope.records = records.slice();
 
+		$scope.timechart = [
+			{
+				key: 'trend',
+				color: '#8ae234',
+			},
+			{
+				key: 'average',
+				color: '#729fcf',
+			},
+			{
+				key: 'uptime',
+				color: 'black',
+			},
+		];
+
+		$scope.timechart.forEach(function(line) {
+			line.data = records.slice().map(function(record) {
+				return {
+					x: record.since*1000,
+					y: record[line.key]/3600.,
+				};
+			});
+
+		});
+
 	});
 
 });
 
 
-app.directive('myChart', function ($parse) {
+app.directive('myTimeChart', function ($parse) {
 
 	var margin = {top: 20, right: 20, bottom: 30, left: 50},
 		width = 960 - margin.left - margin.right,
@@ -36,41 +61,31 @@ app.directive('myChart', function ($parse) {
 		} 
 	};
 
-	function draw(records, el) {
+	function draw(sets, el) {
 		var chart = d3.select(el);
 
-		var data = {
-			uptime: [],
-			avg: [],
-			trend: [],
-		};
+		var some = sets[0].data[0];
 
 		var domains = {
 			x: {
-				min: records.slice(0,1)[0].since*1000,
-				max: records.slice(0,1)[0].since*1000,
+				min: some.x,
+				max: some.x,
 			},
 			y: {
-				min: records.slice(0,1)[0].uptime/3600.,
-				max: records.slice(0,1)[0].uptime/3600.,
+				min: some.y,
+				max: some.y,
 			},
 		};
 
-		records.slice().forEach(function(record, i) {
-			var x = record.since*1000
-			var y = record.uptime/3600.
-
-			data.uptime.push({x: x, y: y});
-			data.trend.push({x: x, y: record.trend/3600.})
-			data.avg.push({x: x, y: record.average/3600.})
-
-			domains.x.min = Math.min(domains.x.min, x);
-			domains.x.max = Math.max(domains.x.max, x);
-			if(i !== records.length-1) {
-				domains.y.min = Math.min(domains.y.min, y);
-				domains.y.max = Math.max(domains.y.max, y);
-			}
-
+		sets.forEach(function(set) {
+			set.data.forEach(function(point, i) {
+				domains.x.min = Math.min(domains.x.min, point.x);
+				domains.x.max = Math.max(domains.x.max, point.x);
+				if(i < set.data.length-1) {
+					domains.y.min = Math.min(domains.y.min, point.y);
+					domains.y.max = Math.max(domains.y.max, point.y);
+				}
+			});
 		});
 
 		var svg = chart.append("div").attr("class", "chart").append("svg")
@@ -115,9 +130,24 @@ app.directive('myChart', function ($parse) {
 			.attr("width", width)
 			.attr("height", height);
 
-		plot(data.trend, 'trend');
-		plot(data.avg, 'avg');
-		plot(data.uptime, 'uptime');
+		sets.forEach(function(set) {
+			svg.append("path")
+				.attr("clip-path", "url(#chart-area)")
+				.datum(set.data)
+				.attr("class", "line")
+				.attr('style', 'stroke: '+set.color)
+				.attr("d", line);
+			svg.selectAll(".point")
+				.data(set.data)
+				.enter().append("circle")
+				.attr("class", "point-"+set.key)
+				.attr("clip-path", "url(#chart-area)")
+				.attr("stroke", set.color)
+				.attr("fill", function(d, i) { return set.color })
+				.attr("cx", function(d, i) { return x(d.x) })
+				.attr("cy", function(d, i) { return y(d.y) })
+				.attr("r", function(d, i) { return 1 });
+		});
 
 		/*svg.append("text")
 			.attr("class", "x label")
@@ -125,23 +155,6 @@ app.directive('myChart', function ($parse) {
 			.attr("x", width/2.)
 			.attr("y", height + 35)
 			.text("Date")*/
-
-		function plot(data, suffix) {
-			svg.append("path")
-				.attr("clip-path", "url(#chart-area)")
-				.datum(data)
-				.attr("class", "line line-"+suffix)
-				.attr("d", line);
-			svg.selectAll(".point")
-				.data(data)
-				.enter().append("circle")
-				.attr("clip-path", "url(#chart-area)")
-				.attr("stroke", "black")
-				.attr("fill", function(d, i) { return "black" })
-				.attr("cx", function(d, i) { return x(d.x) })
-				.attr("cy", function(d, i) { return y(d.y) })
-				.attr("r", function(d, i) { return 1 });
-		}
 
 	}
 });
