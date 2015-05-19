@@ -36,4 +36,4 @@ assets:
 		'angular-moment'
 
 run:
-	go run *.go -verbose
+	go run *.go
