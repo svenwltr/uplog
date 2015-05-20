@@ -48,8 +48,7 @@ func recordHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func Start(appRoot string, port int) {
-	handleFiles("/assets/", path.Join(appRoot, "resources/assets"))
-	handleFiles("/", path.Join(appRoot, "resources/static"))
+	handleFiles("/", path.Join(appRoot, "resources"))
 
 	http.HandleFunc("/api/records", recordHandler)
 
