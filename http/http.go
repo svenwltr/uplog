@@ -13,13 +13,7 @@ import (
 
 var log *logging.Logger = logging.MustGetLogger("uplog.http")
 
-func handleFiles(url string, dir string) {
-	http.Handle(url, logged(http.StripPrefix(
-		url, http.FileServer(http.Dir(dir)))))
-
-}
-
-func logged(handler http.Handler) http.Handler {
+func loggedHandler(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Debug("%s %s %s", r.RemoteAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
@@ -28,30 +22,50 @@ func logged(handler http.Handler) http.Handler {
 
 }
 
-func recordHandler(w http.ResponseWriter, r *http.Request) {
-	log.Debug("%s %s %s", r.RemoteAddr, r.Method, r.URL)
-	records, err := uptimed.GetRecords()
-	if err != nil {
-		log.Error(err.Error())
-		w.WriteHeader(500)
-	}
+type jsonHandlerFunc func() (interface{}, error)
 
-	bytes, err := json.Marshal(records)
-	if err != nil {
-		log.Error(err.Error())
-		w.WriteHeader(500)
-	}
+func jsonHandler(fn jsonHandlerFunc) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		data, err := fn()
+		if err != nil {
+			log.Error(err.Error())
+			w.WriteHeader(500)
+			return
+		}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(bytes)
+		bytes, err := json.Marshal(data)
+		if err != nil {
+			log.Error(err.Error())
+			w.WriteHeader(500)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(bytes)
+
+	})
 
 }
 
 func Start(appRoot string, port int) {
-	handleFiles("/", path.Join(appRoot, "resources"))
+	// handle static files
+	var h http.Handler
+	h = http.FileServer(http.Dir(path.Join(appRoot, "resources")))
+	h = http.StripPrefix("/", h)
+	h = loggedHandler(h)
+	http.Handle("/", h)
 
-	http.HandleFunc("/api/records", recordHandler)
+	// handle full record list
+	h = jsonHandler(func() (interface{}, error) { return uptimed.GetRecords() })
+	h = loggedHandler(h)
+	http.Handle("/api/records", h)
 
+	// handle full record list
+	h = jsonHandler(func() (interface{}, error) { return uptimed.GetScore() })
+	h = loggedHandler(h)
+	http.Handle("/api/score", h)
+
+	// start server
 	listen := fmt.Sprintf(":%d", port)
 	log.Info("Starting HTTP server on %s\n", listen)
 	http.ListenAndServe(listen, nil)
