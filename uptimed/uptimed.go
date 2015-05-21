@@ -27,8 +27,8 @@ type Score struct {
 }
 
 type Stats struct {
-	Score   *Score `json:"score"`
-	Sum     int64  `json:"sum"`
+	Score   *Score `json:"scores"`
+	Total   int64  `json:"total"`
 	Trend   int64  `json:"trend"`
 	Average int64  `json:"average"`
 }

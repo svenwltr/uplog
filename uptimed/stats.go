@@ -24,9 +24,9 @@ func GetStats() (stats *Stats, err error) {
 
 	stats.Average = int64(yesterday.Average)
 	stats.Trend = int64(yesterday.Trend)
-	stats.Sum = 0
+	stats.Total = 0
 	for _, r := range *records {
-		stats.Sum += r.Uptime
+		stats.Total += r.Uptime
 	}
 
 	return

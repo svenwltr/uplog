@@ -26,10 +26,10 @@
 				<td>in {{ scores.next.uptime - scores.curr.uptime | duration }}</th>
 				<td>at {{ (scores.next.uptime + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
 			</tr>
-			<tr ng-if="stats.avg > scores.curr.uptime">
+			<tr ng-if="stats.average > scores.curr.uptime">
 				<th>Average</th>
-				<td>in {{ stats.avg - scores.curr.uptime | duration }}</th>
-				<td>at {{ (stats.avg + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
+				<td>in {{ stats.average - scores.curr.uptime | duration }}</th>
+				<td>at {{ (stats.averge + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
 			</tr>
 			<tr ng-if="stats.trend > scores.curr.uptime">
 				<th>Trending</th>
@@ -40,7 +40,7 @@
 
 			<tr>
 				<th colspan="2">Average Uptime</th>
-				<td>{{ stats.avg | duration  }}</th>
+				<td>{{ stats.average | duration  }}</th>
 			</tr>
 			<tr>
 				<th colspan="2">Trending Uptime</th>
@@ -48,14 +48,14 @@
 			</tr>
 			<tr>
 				<th colspan="2">Trend</th>
-				<td ng-class="{'text-danger': stats.avg > stats.trend,
-					'text-success': stats.avg < stats.trend}">
-					{{ ( 1 - ( stats.avg / stats.trend ) ) * 100 | number:2 }}%
+				<td ng-class="{'text-danger': stats.average > stats.trend,
+					'text-success': stats.average < stats.trend}">
+					{{ ( 1 - ( stats.average / stats.trend ) ) * 100 | number:2 }}%
 				</th>
 			</tr>
 			<tr>
 				<th colspan="2">Average Uptime Per Week</th>
-				<td>{{ 5 * stats.avg | duration  }}</th>
+				<td>{{ 5 * stats.average | duration  }}</th>
 			</tr>
 			<tr>
 				<th colspan="2">Total Uptime</th>
