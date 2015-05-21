@@ -25,3 +25,10 @@ type Score struct {
 	Prev  *Record `json:"prev"`
 	Worst *Record `json:"worst"`
 }
+
+type Stats struct {
+	Score   *Score `json:"score"`
+	Sum     int64  `json:"sum"`
+	Trend   int64  `json:"trend"`
+	Average int64  `json:"average"`
+}

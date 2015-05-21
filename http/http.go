@@ -60,10 +60,15 @@ func Start(appRoot string, port int) {
 	h = loggedHandler(h)
 	http.Handle("/api/records", h)
 
-	// handle full record list
+	// handle scores
 	h = jsonHandler(func() (interface{}, error) { return uptimed.GetScore() })
 	h = loggedHandler(h)
 	http.Handle("/api/score", h)
+
+	// handle stats
+	h = jsonHandler(func() (interface{}, error) { return uptimed.GetStats() })
+	h = loggedHandler(h)
+	http.Handle("/api/stats", h)
 
 	// start server
 	listen := fmt.Sprintf(":%d", port)

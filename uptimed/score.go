@@ -5,6 +5,10 @@ func GetScore() (score *Score, err error) {
 	var index map[int]*Record
 
 	records, err = GetRecords()
+	if err != nil {
+		return nil, err
+	}
+
 	index = make(map[int]*Record)
 	score = new(Score)
 
