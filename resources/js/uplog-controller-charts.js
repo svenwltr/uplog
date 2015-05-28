@@ -67,7 +67,7 @@ app.directive('myDistributionChart', function($parse) {
 	function draw(data, active,  el) {
 		data.sort();
 
-		density = data.map(function(value, i) {
+		var density = data.map(function(value, i) {
 			return {
 				x: value,
 				y: 1.*i/data.length,
@@ -75,6 +75,7 @@ app.directive('myDistributionChart', function($parse) {
 		});
 
 		var distribution = [];
+
 		density.slice(1).reduce(function(prev, next) {
 			var dx = next.x - prev.x;
 			var dy = next.y - prev.y;

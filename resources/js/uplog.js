@@ -30,21 +30,35 @@ app.config(['$routeProvider', function($routeProvider) {
 }]);
 
 app.filter('duration', function() {
-	return function(sec_num) {
-		var prefix = '';
-		if(sec_num < 0) {
-			prefix = '-';
-			sec_num = sec_num * -1;
+	return function(seconds) {
+		var result = '';
+		if(seconds < 0) {
+			result = '-';
+			seconds = seconds * -1;
 		}
-		var hours   = Math.floor(sec_num / 3600);
-		var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-		var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-		if (hours   < 10) {hours   = "0"+hours;}
-		if (minutes < 10) {minutes = "0"+minutes;}
-		if (seconds < 10) {seconds = "0"+seconds;}
-		var time    = prefix+hours+':'+minutes+':'+seconds;
-		return time;
+		var minutes = Math.floor(seconds / 60);
+		var seconds = seconds % 60;
+
+		var hours   = Math.floor(minutes / 60);
+		var minutes = minutes % 60;
+
+		var days  = Math.floor(hours / 24);
+		var hours = hours % 24;
+
+		if(days > 0)
+			result = result + days + 'd'
+
+		if(hours > 0 | days > 0)
+			result = result + hours + 'h'
+
+		if(hours > 0 | days > 0 | minutes > 0)
+			result = result + minutes + 'm'
+
+		if(hours > 0 | days > 0 | minutes > 0 | seconds > 0)
+			result = result + seconds + 's'
+
+		return result;
 
 	};
 })

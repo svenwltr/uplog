@@ -19,7 +19,6 @@ func GetStats() (stats *Stats, err error) {
 	}
 	sort.Sort(BySince(*records))
 
-	//stats.Today = (*records)[len(*records)-1]
 	yesterday = (*records)[len(*records)-2]
 
 	stats.Average = int64(yesterday.Average)
