@@ -29,7 +29,7 @@
 			<tr ng-if="stats.average > scores.curr.uptime">
 				<th>Average</th>
 				<td>in {{ stats.average - scores.curr.uptime | duration }}</th>
-				<td>at {{ (stats.averge + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
+				<td>at {{ (stats.average + scores.curr.since) * 1000 | date:"mediumTime" }}</td>
 			</tr>
 			<tr ng-if="stats.trend > scores.curr.uptime">
 				<th>Trending</th>
