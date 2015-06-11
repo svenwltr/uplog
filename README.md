@@ -4,6 +4,7 @@ Uplog
 A hackish web frontend for [uptimed](https://github.com/rpodgorny/uptimed).
 I am using it for displaying my working time.
 
+![Screenshot](https://raw.githubusercontent.com/svenwltr/uplog/master/screenshot.png)
 
 Features
 --------
