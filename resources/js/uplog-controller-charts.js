@@ -74,9 +74,49 @@ app.directive('myDistributionChart', function($parse) {
 			};
 		});
 
-		var distribution = [];
+		var fn = function(x) {
+			var lower = density
+				.filter(function(p){
+					return p.x<x
+				})
+				.reduce(function(p1, p2) {
+					return (p1.x > p2.x)?p1:p2;
+				}, {x: Number.MIN_VALUE});
+			var upper = density
+				.filter(function(p){
+					return x<p.x
+				})
+				.reduce(function(p1, p2) {
+					return (p1.x < p2.x)?p1:p2;
+				}, {x: Number.MAX_VALUE});
 
-		density.slice(1).reduce(function(prev, next) {
+			/* simple crossmultiplication */
+			var dx1 = upper.x - lower.x;
+			var dy1 = upper.y - lower.y;
+			var dx2 = x - lower.x;
+			var dy2 = (dy1/dx1)*dx2;
+			var y = lower.y + dy2;
+
+			return y;
+
+		}
+
+		var minx = density.reduce(function(x, p) {return Math.min(p.x, x)}, Number.MAX_VALUE);
+		var maxx = density.reduce(function(x, p) {return Math.max(p.x, x)}, Number.MIN_VALUE);
+		var step = 40;
+		var diff = (maxx - minx)/step;
+
+		var smoothdensity = [];
+		for(i=0;i<=step;i++) {
+			var x = minx+i*diff;
+			var y = fn(x);
+			if(y) {
+				smoothdensity.push({x: x, y: y});
+			}
+		}
+
+		var distribution = [];
+		smoothdensity.slice(1).reduce(function(prev, next) {
 			var dx = next.x - prev.x;
 			var dy = next.y - prev.y;
 
@@ -87,7 +127,7 @@ app.directive('myDistributionChart', function($parse) {
 
 			return next;
 
-		}, density[0]);
+		}, smoothdensity[0]);
 
 		data = distribution;
 
